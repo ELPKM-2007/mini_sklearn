@@ -1,5 +1,4 @@
 import numpy as np
-from mini_change_ndim_1 import change#把一维数组转为[1,2,3...]
 
 
 class mini_LinerRegression:
@@ -30,9 +29,26 @@ class mini_LinerRegression:
             self.coef_=numerator/denominator
             self.intercept_=y_mean-self.coef_*x_mean
         else:
-            pass#多元线性回归
+            #添加一列1作为截距列
+            x_train=np.c_[np.ones((x_train.shape[0],1)),x_train]
+            w=np.linalg.pinv(x_train.T @ x_train) @ x_train.T @ y_train
+            self.intercept_=w[0]
+            self.coef_=w[1:]
+
+
+
     def predict(self,x_test):
         if self.intercept_ is None or self.coef_ is None:
             raise ValueError("模型未训练")
-        x_test=np.array(x_test).ravel()
-        return self.coef_*x_test+self.intercept_
+        x_test=np.array(x_test)
+        if x_test.ndim == 1:
+            x_test=x_test.reshape(-1,1)
+        return x_test @ self.coef_+self.intercept_
+
+if __name__=='__main__':
+    x_train=[1,2,3,4,5,6]
+    y_train=[4,5,6,7,8,9]
+    estimator=mini_LinerRegression()
+    estimator.fit(x_train,y_train)
+    print(estimator.coef_)
+    print(estimator.intercept_)

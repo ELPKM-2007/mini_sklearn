@@ -1,6 +1,6 @@
 # mini_sklearn
-
-手写实现常用机器学习算法的轻量级库，用于学习算法原理。
+2026.6.2:删除工具函数mini_change_ndim_1
+新增:逻辑回归，决策树，随机森林算法
 
 ## 模块说明
 
@@ -13,5 +13,19 @@ KNN（K近邻）分类器，支持欧氏距离和曼哈顿距离。核心思想�
 ### mini_gd_linearregression.py
 一元线性回归的梯度下降实现。与正规方程不同，通过迭代更新参数逐步逼近最优解，可设置学习率和迭代轮数。
 
-### mini_change_ndim_1.py
-工具函数，将 `(1,n)` 或 `(n,1)` 格式的二维数组转换为一维数组，供其他模块调用。
+### mini_sklearn\mini_logicregression.py
+逻辑回归,实际上就是换个损失函数的线性回归,借助sigmoid映射实现逻辑预测
+
+### mini_sklearn\mini_decision_tree_classifier.py
+决策树,支持参数min_samples_split, max_depth, criterion, max_features
+大致实现逻辑:best_split返回传入的x,y对应的最优决策特征,阈值,以及对应criterion的熵值
+build_tree中每个决策点都用一次best_split,接着根据所返回的特征和阈值将原数据集分为两部分,递归建树.
+当某个节点所有标签相同或者达到条件min_samples_split, max_depth时,节点(叶子)便会用value值存储其预测结果
+
+支持max_features,使得每次决策使用的特征集很可能不同,提高随机性
+
+### mini_sklearn\mini_random_forest_classifier.py
+随机森林,支持参数n_estimators,bootstrap,min_samples_split,max_depth,criterion,max_features
+大致实现逻辑:fit以实现self.forest,每棵树的训练均使用不同的数据集(量相同内不同),同时训练过程也会因max_features产生很大的随机性
+封装方法_predict_one实现单行预测,多棵决策树投票决定结果
+predict借助predict_one方法实现数据集预测
